@@ -319,7 +319,7 @@ struct timeval {
 
 #ifndef HAVE_BOOL_T
 #ifdef _MSC_VER && _MSC_VER > 1800
-//Visual Studio 2015 C++ toolset has bool obviously, but for some reason HAVE_BOOL_T is not defined...
+/* Visual Studio 2015 C++ toolset has bool obviously, but for some reason HAVE_BOOL_T is not defined... */
 #else
 
   typedef enum {
