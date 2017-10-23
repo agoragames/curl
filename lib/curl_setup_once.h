@@ -317,6 +317,10 @@ struct timeval {
  * global namespace though, so use bool_false and bool_true.
  */
 
+#if defined(_MSC_VER) && _MSC_VER > 1500
+#define HAVE_BOOL_T
+#endif
+
 #ifndef HAVE_BOOL_T
   typedef enum {
       bool_false = 0,
