@@ -318,10 +318,6 @@ struct timeval {
  */
 
 #ifndef HAVE_BOOL_T
-#ifdef _MSC_VER && _MSC_VER > 1800
-/* Visual Studio 2015 C++ toolset has bool obviously, but for some reason HAVE_BOOL_T is not defined... */
-#else
-
   typedef enum {
       bool_false = 0,
       bool_true  = 1
@@ -336,7 +332,6 @@ struct timeval {
 #  define false bool_false
 #  define true  bool_true
 #  define HAVE_BOOL_T
-#endif
 #endif
 
 
