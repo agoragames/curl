@@ -317,7 +317,8 @@ struct timeval {
  * global namespace though, so use bool_false and bool_true.
  */
 
-#if defined(_MSC_VER) && _MSC_VER == 1900
+/* For some reason VS2015 targeting x64 platforms doesn't realize it already has bool defined... */
+#if defined(_MSC_VER) && _MSC_VER == 1900 && defined(_WIN64)
 #define HAVE_BOOL_T
 #endif
 
