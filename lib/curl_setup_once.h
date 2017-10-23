@@ -317,7 +317,7 @@ struct timeval {
  * global namespace though, so use bool_false and bool_true.
  */
 
-#if defined(_MSC_VER) && _MSC_VER > 1500
+#if defined(_MSC_VER) && _MSC_VER == 1900
 #define HAVE_BOOL_T
 #endif
 
