@@ -65,9 +65,7 @@
 #endif
 
 #ifdef WIN32
-#ifndef _MSC_VER
 #include <io.h>
-#endif
 #include <fcntl.h>
 #endif
 
@@ -316,11 +314,6 @@ struct timeval {
  * On C99 platforms 'false' and 'true' also exist. Enum uses a
  * global namespace though, so use bool_false and bool_true.
  */
-
-/* For some reason some platforms have HAVE_BOOL_T defined, and some don't. I blame curl's cmake file. Not sure exactly what the pattern is here. */
-#if defined(bool)
-#define HAVE_BOOL_T
-#endif
 
 #ifndef HAVE_BOOL_T
   typedef enum {
