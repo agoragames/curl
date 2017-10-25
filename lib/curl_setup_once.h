@@ -65,7 +65,9 @@
 #endif
 
 #ifdef WIN32
+#ifndef _MSC_VER
 #include <io.h>
+#endif
 #include <fcntl.h>
 #endif
 
