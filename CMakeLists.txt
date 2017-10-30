@@ -733,6 +733,9 @@ check_symbol_exists(getpwuid      "${CURL_INCLUDES}" HAVE_GETPWUID)
 check_symbol_exists(geteuid       "${CURL_INCLUDES}" HAVE_GETEUID)
 check_symbol_exists(utime         "${CURL_INCLUDES}" HAVE_UTIME)
 
+# This block needs to live here. When we include the OPENSSL_INCLUDE_DIR and compile with dynamic linking, we'll get C2375 
+# errors (https://msdn.microsoft.com/en-us/library/5k6kw95a.aspx) for several of the curl tests if we place it higher up,
+# since we redefine some posix functions in libressl (win32compat.h) that are in the std windows toolkit.
 if(CMAKE_USE_OPENSSL)
   if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
     find_library(RT_LIBRARY librt.a rt)
