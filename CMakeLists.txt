@@ -300,6 +300,42 @@ set(USE_OPENSSL OFF)
 set(HAVE_LIBCRYPTO OFF)
 set(HAVE_LIBSSL OFF)
 
+if(CMAKE_USE_OPENSSL)
+  if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
+    find_library(RT_LIBRARY librt.a rt)
+    list(APPEND OPENSSL_LIBRARIES ${RT_LIBRARY})
+  endif()
+  # TODO: Do we have to add the compat folder to the include path?
+  # We need it to compile, but when building against openssl, curl didn't seem to need it.
+  # We (WBNY) added it to the include path when we added libressl support
+  # The problem with adding the compat folder to the include path is that libressl relies heavily on
+  # cmake detection for stuff it may need to provide based on the missing features of the compiler chain
+  # but curl doesn't have access to it.
+  set(OPENSSL_INCLUDE_DIR ${LibreSSL_SOURCE_DIR}/include ${LibreSSL_SOURCE_DIR}/include/compat)
+
+  # Since we need to the compat folder in the include path for curl to build properly
+  # We'll need to explicitly set some defines here to avoid build issues
+  # NO_REDEF_POSIX_FUNCTIONS - Curl should not use libressl's windows posix wrappers
+  # HAVE_STRNLEN - Curl defines its own Curl_strnlen that it uses, don't bring in libressl's version
+  add_definitions(-DNO_REDEF_POSIX_FUNCTIONS -DHAVE_STRNLEN)
+
+  list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
+  set(USE_OPENSSL ON)
+  set(HAVE_LIBCRYPTO ON)
+  set(HAVE_LIBSSL ON)
+  include_directories(${OPENSSL_INCLUDE_DIR})
+  set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
+  check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
+  check_include_file("openssl/engine.h" HAVE_OPENSSL_ENGINE_H)
+  check_include_file("openssl/err.h"    HAVE_OPENSSL_ERR_H)
+  check_include_file("openssl/pem.h"    HAVE_OPENSSL_PEM_H)
+  check_include_file("openssl/pkcs12.h" HAVE_OPENSSL_PKCS12_H)
+  check_include_file("openssl/rsa.h"    HAVE_OPENSSL_RSA_H)
+  check_include_file("openssl/ssl.h"    HAVE_OPENSSL_SSL_H)
+  check_include_file("openssl/x509.h"   HAVE_OPENSSL_X509_H)
+  check_include_file("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
+endif()
+
 if(NOT CURL_DISABLE_LDAP)
 
   if(WIN32)
@@ -621,6 +657,7 @@ check_include_file_concat("sys/utsname.h"   HAVE_SYS_UTSNAME_H)
 check_include_file_concat("idna.h"          HAVE_IDNA_H)
 
 
+
 check_type_size(size_t  SIZEOF_SIZE_T)
 check_type_size(ssize_t  SIZEOF_SSIZE_T)
 check_type_size("long long"  SIZEOF_LONG_LONG)
@@ -732,46 +769,6 @@ check_symbol_exists(strlcat       "${CURL_INCLUDES}" HAVE_STRLCAT)
 check_symbol_exists(getpwuid      "${CURL_INCLUDES}" HAVE_GETPWUID)
 check_symbol_exists(geteuid       "${CURL_INCLUDES}" HAVE_GETEUID)
 check_symbol_exists(utime         "${CURL_INCLUDES}" HAVE_UTIME)
-
-# This block needs to live here. When we include the OPENSSL_INCLUDE_DIR and compile with dynamic linking, we'll get C2375 
-# errors (https://msdn.microsoft.com/en-us/library/5k6kw95a.aspx) for several of the curl tests if we place it higher up,
-# since we redefine some posix functions in libressl (win32compat.h) that are in the std windows toolkit.
-if(CMAKE_USE_OPENSSL)
-  if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
-    find_library(RT_LIBRARY librt.a rt)
-    list(APPEND OPENSSL_LIBRARIES ${RT_LIBRARY})
-  endif()
-  # TODO: Do we have to add the compat folder to the include path?
-  # We need it to compile, but when building against openssl, curl didn't seem to need it.
-  # We (WBNY) added it to the include path when we added libressl support
-  # The problem with adding the compat folder to the include path is that libressl relies heavily on
-  # cmake detection for stuff it may need to provide based on the missing features of the compiler chain
-  # but curl doesn't have access to it.
-  set(OPENSSL_INCLUDE_DIR ${LibreSSL_SOURCE_DIR}/include ${LibreSSL_SOURCE_DIR}/include/compat)
-
-  # Since we need to the compat folder in the include path for curl to build properly
-  # We'll need to explicitly set some defines here to avoid build issues
-  # NO_REDEF_POSIX_FUNCTIONS - Curl should not use libressl's windows posix wrappers
-  # HAVE_STRNLEN - Curl defines its own Curl_strnlen that it uses, don't bring in libressl's version
-  add_definitions(-DNO_REDEF_POSIX_FUNCTIONS -DHAVE_STRNLEN)
-
-  list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
-  set(USE_OPENSSL ON)
-  set(HAVE_LIBCRYPTO ON)
-  set(HAVE_LIBSSL ON)
-  include_directories(${OPENSSL_INCLUDE_DIR})
-  set(CMAKE_REQUIRED_INCLUDES ${OPENSSL_INCLUDE_DIR})
-  check_include_file("openssl/crypto.h" HAVE_OPENSSL_CRYPTO_H)
-  check_include_file("openssl/engine.h" HAVE_OPENSSL_ENGINE_H)
-  check_include_file("openssl/err.h"    HAVE_OPENSSL_ERR_H)
-  check_include_file("openssl/pem.h"    HAVE_OPENSSL_PEM_H)
-  check_include_file("openssl/pkcs12.h" HAVE_OPENSSL_PKCS12_H)
-  check_include_file("openssl/rsa.h"    HAVE_OPENSSL_RSA_H)
-  check_include_file("openssl/ssl.h"    HAVE_OPENSSL_SSL_H)
-  check_include_file("openssl/x509.h"   HAVE_OPENSSL_X509_H)
-  check_include_file("openssl/rand.h"   HAVE_OPENSSL_RAND_H)
-endif()
-
 if(CMAKE_USE_OPENSSL)
   check_symbol_exists(RAND_status   "${CURL_INCLUDES}" HAVE_RAND_STATUS)
   check_symbol_exists(RAND_screen   "${CURL_INCLUDES}" HAVE_RAND_SCREEN)
