@@ -45,6 +45,8 @@ include(Macros)
 
 project( CURL C )
 
+message(${CMAKE_SYSROOT})
+
 file (READ ${CURL_SOURCE_DIR}/include/curl/curlver.h CURL_VERSION_H_CONTENTS)
 string (REGEX MATCH "#define LIBCURL_VERSION \"[^\"]*"
   CURL_VERSION ${CURL_VERSION_H_CONTENTS})
@@ -54,6 +56,8 @@ string (REGEX MATCH "#define LIBCURL_VERSION_NUM 0x[0-9a-fA-F]+"
 string (REGEX REPLACE "[^0]+0x" "" CURL_VERSION_NUM ${CURL_VERSION_NUM})
 
 include_regular_expression("^.*$")    # Sukender: Is it necessary?
+
+set(FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
 # Setup package meta-data
 # SET(PACKAGE "curl")
@@ -300,9 +304,11 @@ set(USE_OPENSSL OFF)
 set(HAVE_LIBCRYPTO OFF)
 set(HAVE_LIBSSL OFF)
 
+# set(RT_LIBRARY "C:\\Program Files\\GGP SDK\\sysroot\\usr\\lib\\x86_64-linux-gnu\\librt.a")
+
 if(CMAKE_USE_OPENSSL)
   if(${CMAKE_SYSTEM_NAME} STREQUAL Linux)
-    find_library(RT_LIBRARY librt.a rt)
+    find_library(RT_LIBRARY librt rt)
     list(APPEND OPENSSL_LIBRARIES ${RT_LIBRARY})
   endif()
   # TODO: Do we have to add the compat folder to the include path?
@@ -982,6 +988,9 @@ if(CMAKE_COMPILER_IS_GNUCC AND APPLE)
   endif(HAVE_C_FLAG_Wno_long_double)
 endif(CMAKE_COMPILER_IS_GNUCC AND APPLE)
 
+set(CMAKE_EXTRA_INCLUDE_FILES "linux/socket.h")
+set(CMAKE_EXTRA_INCLUDE_FILES "socket.h")
+
 if(HAVE_SOCKLEN_T)
   set(CURL_TYPEOF_CURL_SOCKLEN_T "socklen_t")
   if(WIN32)
@@ -989,12 +998,14 @@ if(HAVE_SOCKLEN_T)
   elseif(HAVE_SYS_SOCKET_H)
     set(CMAKE_EXTRA_INCLUDE_FILES "sys/socket.h")
   endif()
-  check_type_size("socklen_t" CURL_SIZEOF_CURL_SOCKLEN_T)
+  #check_type_size("socklen_t" CURL_SIZEOF_CURL_SOCKLEN_T)
+  set(CURL_TYPEOF_CURL_SOCKLEN_T int)
+  set(CURL_SIZEOF_CURL_SOCKLEN_T ${SIZEOF_INT})
   set(CMAKE_EXTRA_INCLUDE_FILES)
-  if(NOT HAVE_CURL_SIZEOF_CURL_SOCKLEN_T)
-    message(FATAL_ERROR
-     "Check for sizeof socklen_t failed, see CMakeFiles/CMakerror.log")
-  endif()
+  # if(NOT HAVE_CURL_SIZEOF_CURL_SOCKLEN_T)
+  #   message(FATAL_ERROR
+  #    "Check for sizeof socklen_t failed, see CMakeFiles/CMakerror.log")
+  # endif()
 else()
   set(CURL_TYPEOF_CURL_SOCKLEN_T int)
   set(CURL_SIZEOF_CURL_SOCKLEN_T ${SIZEOF_INT})
@@ -1041,9 +1052,9 @@ function(TRANSFORM_MAKEFILE_INC INPUT_FILE OUTPUT_FILE)
   string(REPLACE "$(top_srcdir)"   "\${CURL_SOURCE_DIR}" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
   string(REPLACE "$(top_builddir)" "\${CURL_BINARY_DIR}" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
 
-  string(REGEX REPLACE "\\\\\n" "§!§" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
+  string(REGEX REPLACE "\\\\\n" "ï¿½!ï¿½" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
   string(REGEX REPLACE "([a-zA-Z_][a-zA-Z0-9_]*)[\t ]*=[\t ]*([^\n]*)" "SET(\\1 \\2)" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
-  string(REPLACE "§!§" "\n" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
+  string(REPLACE "ï¿½!ï¿½" "\n" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})
 
   string(REGEX REPLACE "\\$\\(([a-zA-Z_][a-zA-Z0-9_]*)\\)" "\${\\1}" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})    # Replace $() with ${}
   string(REGEX REPLACE "@([a-zA-Z_][a-zA-Z0-9_]*)@" "\${\\1}" MAKEFILE_INC_TEXT ${MAKEFILE_INC_TEXT})    # Replace @@ with ${}, even if that may not be read by CMake scripts.
