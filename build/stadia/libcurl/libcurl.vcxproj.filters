@@ -312,9 +312,6 @@
     <ClInclude Include="..\..\..\include\curl\curl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\curl\curlbuild.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\curl\curlrules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -371,6 +368,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\lib\vtls\vtls.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\curl\curlbuild.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

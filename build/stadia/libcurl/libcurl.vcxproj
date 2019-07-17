@@ -21,13 +21,17 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <ToolchainPath>$(GGP_SDK_PATH)BaseSDK\LLVM\7.0.1\</ToolchainPath>
+    <GgpToolchainPath>$(GGP_SDK_PATH)BaseSDK\LLVM\7.0.1\</GgpToolchainPath>
+    <GgpHeaderPath>$(GGP_SDK_PATH)BaseSDK\ggp\include\ggp_latest</GgpHeaderPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <ToolchainPath>$(GGP_SDK_PATH)BaseSDK\LLVM\7.0.1\</ToolchainPath>
+    <GgpToolchainPath>$(GGP_SDK_PATH)BaseSDK\LLVM\7.0.1\</GgpToolchainPath>
+    <GgpHeaderPath>$(GGP_SDK_PATH)BaseSDK\ggp\include\ggp_latest</GgpHeaderPath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -43,7 +47,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'">
     <ExecutablePath>$(GgpBinDir);$(VC_ExecutablePath_x64);$(MSBuild_ExecutablePath);$(PATH);$(GgpSdkDir)dev\bin</ExecutablePath>
-    <IncludePath>C:\Users\blafountain\projects\hydra-sdk-cpp\3rdparty\api-framework\api-framework\libressl\include;$(ProjectDir)include;C:\Users\blafountain\projects\hydra-sdk-cpp\3rdparty\api-framework\api-framework\curl\lib;C:\Users\blafountain\projects\hydra-sdk-cpp\3rdparty\api-framework\api-framework\curl\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|GGP'">
     <Link>
@@ -54,6 +57,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../libressl/include;$(ProjectDir)../../../lib;$(ProjectDir)../../../include;$(ProjectDir)include/curl;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'">
@@ -61,12 +65,13 @@
       <AdditionalDependencies>libggp.so;libvulkan.so;libpulse.so;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>_GNU_SOURCE;VK_USE_PLATFORM_GGP</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GNU_SOURCE;VK_USE_PLATFORM_GGP;HAVE_CONFIG_H</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../libressl/include;$(ProjectDir)../../../lib;$(ProjectDir)../../../include;$(ProjectDir)include/curl;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -75,7 +80,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\curl\curl.h" />
-    <ClInclude Include="..\..\..\include\curl\curlbuild.h" />
     <ClInclude Include="..\..\..\include\curl\curlrules.h" />
     <ClInclude Include="..\..\..\include\curl\curlver.h" />
     <ClInclude Include="..\..\..\include\curl\easy.h" />
@@ -192,6 +196,7 @@
     <ClInclude Include="..\..\..\lib\warnless.h" />
     <ClInclude Include="..\..\..\lib\wildcard.h" />
     <ClInclude Include="..\..\..\lib\x509asn1.h" />
+    <ClInclude Include="include\curl\curlbuild.h" />
     <ClInclude Include="include\curl_config.h" />
   </ItemGroup>
   <ItemGroup>
