@@ -65,7 +65,7 @@
       <AdditionalDependencies>libggp.so;libvulkan.so;libpulse.so;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <PreprocessorDefinitions>_GNU_SOURCE;VK_USE_PLATFORM_GGP;HAVE_CONFIG_H;HAVE_LIBZ;HAVE_ZLIB;HAVE_ZLIB_H</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GNU_SOURCE;VK_USE_PLATFORM_GGP;HAVE_CONFIG_H;</PreprocessorDefinitions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
