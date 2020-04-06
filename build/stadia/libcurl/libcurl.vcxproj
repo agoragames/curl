@@ -59,6 +59,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)../../../../libressl/include;$(ProjectDir)../../../lib;$(ProjectDir)../../../include;$(ProjectDir)include/curl;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseMultiToolTask>true</UseMultiToolTask>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|GGP'">
